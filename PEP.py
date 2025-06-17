@@ -10,14 +10,24 @@ logs = [
 userdict = defaultdict(list)
 leveldict = defaultdict(int)
 recentlogs = deque(maxlen=3)
-def add_log(line: str) -> None:
-        arr = line.split()
-        user = arr[2]
-        user = user[:len(user)-1]
-        level = arr[1]
+
+
+def parse_log(add_log):
+    def wrapper(line):
+        parts = line.split()
+        user = parts[2][:-1]
+        level = parts[1]
         userdict[user].append(line)
         leveldict[level] += 1
         recentlogs.append(line)
+        result =  add_log(line)
+        print("Converted from string to dict")
+        return result
+    return wrapper
+
+@parse_log
+def add_log(line: str) -> None:
+    pass
 
 def get_user_logs(user_id: str) -> list[dict]:
     logs = userdict.get(user_id, [])
